@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <RootNamespace>AOC_2025</RootNamespace>
+    <RootNamespace>AOC_2025_1_1</RootNamespace>
     <TargetFramework>net8.0</TargetFramework>
   </PropertyGroup>
 

@@ -73,28 +73,29 @@ Module Program
 
         For Each Instruction As Integer In Directions
 
-            Dim log As String = $"Start: {CStr(Position)}{vbTab}Instruction: {CStr(Instruction)}{vbTab} Total Zeros: "
+            ' Let's do this the dumbest way possible
 
-            Dim AbsoluteInstruction = Math.Abs(Instruction)
+            Dim n As Integer = Math.Abs(Instruction)
 
-            While AbsoluteInstruction > 99
-                AbsoluteInstruction -= 100
-                TimesAtZero += 1
-            End While
+            If Instruction > 0 Then
+                For i As Integer = 1 To n
+                    Position += 1
+                    If Position = 100 Then
+                        Position = 0
+                        TimesAtZero += 1
+                    End If
+                Next
+            Else
+                For i As Integer = n To 1 Step -1
+                    Position -= 1
+                    If Position = 0 Then
+                        TimesAtZero += 1
+                    ElseIf Position = -1 Then
+                        Position = 99
+                    End If
+                Next
 
-            If Instruction < 0 Then Instruction = AbsoluteInstruction * -1 Else Instruction = AbsoluteInstruction
-
-            Position += Instruction
-
-            If Position > 0 And Position < 100 Then
-                Console.WriteLine($"{log}{CStr(TimesAtZero)}{vbTab}End: {Position}")
-                Continue For
             End If
-
-            If Position > 99 Then Position -= 100 Else If Position < 0 Then Position += 100
-            TimesAtZero += 1
-
-            Console.WriteLine($"{log}{CStr(TimesAtZero)}{vbTab}End: {Position}")
 
         Next
 

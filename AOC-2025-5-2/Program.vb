@@ -9,15 +9,12 @@ Module Program
 
         Dim InventoryStrings() As String = File.ReadAllLines(args(0))
 
-        Dim Position As Integer = 0
-        Dim CurrentLine As String = "na"
-
         Dim FreshRanges As New List(Of FreshRange)
-
-        CurrentLine = InventoryStrings(Position)
+        Dim Position As Integer = 0
+        Dim CurrentLine As String = InventoryStrings(Position)
         Do Until CurrentLine = ""
             Dim Range() As String = CurrentLine.Split("-")
-            FreshRanges.Add(New FreshRange(CLng(Range(0)), CLng(Range(1))))
+            FreshRanges.AddCorrectly(New FreshRange(CLng(Range(0)), CLng(Range(1))))
             Position += 1
             CurrentLine = InventoryStrings(Position)
         Loop
@@ -25,19 +22,6 @@ Module Program
         FreshRanges.Sort(Function(x, y) x.First.CompareTo(y.First))
         For Each Range As FreshRange In FreshRanges
             Console.WriteLine($"{CStr(Range.First)}-{CStr(Range.Last)}")
-        Next
-
-        Dim MergesPerformed As Integer = -1
-        Do Until MergesPerformed = 0
-            MergesPerformed = FreshRanges.MergeRanges()
-            Console.WriteLine(CStr(MergesPerformed))
-        Loop
-
-        'FreshRanges.MergeRanges()
-
-        FreshRanges.Sort(Function(x, y) x.First.CompareTo(y.First))
-        For Each s As FreshRange In FreshRanges
-            Console.WriteLine($"{CStr(s.First)}-{CStr(s.Last)}")
         Next
 
         Dim TotalIds As Long = 0
@@ -49,31 +33,42 @@ Module Program
 
     End Sub
 
-    Public Class FreshRange
+    Public Structure FreshRange
         Public First As Long
         Public Last As Long
         Sub New(ByVal First As Long, ByVal Last As Long)
             Me.First = First
             Me.Last = Last
         End Sub
-    End Class
+    End Structure
 
-    <Extension()> Public Function MergeRanges(ByRef FreshRanges As List(Of FreshRange)) As Integer
+    <Extension()> Public Sub AddCorrectly(ByRef FreshRanges As List(Of FreshRange), ByVal Range As FreshRange)
 
-        Dim MergesPerformed As Integer = 0
+        Dim TouchingRanges As New List(Of FreshRange)
 
-        For i As Integer = FreshRanges.Count - 1 To 1 Step -1
-            Dim x As FreshRange = FreshRanges.Item(i - 1)
-            Dim y As FreshRange = FreshRanges.Item(i)
-            If y.First <= x.Last + 1 Then
-                x.Last = y.Last
-                FreshRanges.Remove(y)
-                MergesPerformed += 1
+        ' I could have just copy pasta'd this from PCP Auto Count, if this was Python. Felt familiar.
+
+        For Each ExistingRange As FreshRange In FreshRanges
+            If Range.First <= ExistingRange.Last And ExistingRange.First <= Range.Last Then
+                TouchingRanges.Add(ExistingRange)
             End If
         Next
 
-        Return MergesPerformed
+        If TouchingRanges.Count = 0 Then
+            FreshRanges.Add(Range)
+            Exit Sub
+        End If
 
-    End Function
+        Dim NewRange As New FreshRange(Range.First, Range.Last)
+
+        For Each TouchingRange As FreshRange In TouchingRanges
+            If TouchingRange.First < NewRange.First Then NewRange.First = TouchingRange.First
+            If TouchingRange.Last > NewRange.Last Then NewRange.Last = TouchingRange.Last
+            FreshRanges.Remove(TouchingRange)
+        Next
+
+        FreshRanges.Add(NewRange)
+
+    End Sub
 
 End Module

@@ -19,11 +19,6 @@ Module Program
             CurrentLine = InventoryStrings(Position)
         Loop
 
-        FreshRanges.Sort(Function(x, y) x.First.CompareTo(y.First))
-        For Each Range As FreshRange In FreshRanges
-            Console.WriteLine($"{CStr(Range.First)}-{CStr(Range.Last)}")
-        Next
-
         Dim TotalIds As Long = 0
         For Each Range As FreshRange In FreshRanges
             TotalIds += (Range.Last - Range.First + 1)

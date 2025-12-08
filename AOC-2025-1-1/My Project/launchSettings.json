@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "AOC-2025": {
-      "commandName": "Project",
-      "commandLineArgs": "\"C:\\Users\\Luke\\Desktop\\input.txt\""
-    }
-  }
-}
